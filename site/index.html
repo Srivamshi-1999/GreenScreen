@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>green screen webpage</title>
+  <style>
+  	#can1
+{
+  border:solid 1px  ;
+  height:200px;
+  
+  
+}
+#can2
+{
+  border:solid 1px;
+  height:200px;
+ 
+  
+}
+body
+{
+  background-color:Aliceblue;
+}
+h1
+{
+  text-align:center;
+  font-family:Arial;
+  
+}
+  </style>
+
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div>
+  <script src="https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+<div>
+<h1> Green Screen Webpage</h2>
+  <canvas id="can1">
+          </canvas>
+<canvas id="can2">
+</canvas>
+<p>
+  Foreground Image: <input type="file" multiple="false" accept="image/*" id="fginput"
+                           onchange="loadforegroundimage()">
+</p>
+<p>
+  Background Image: <input type="file" multiple="false" accept="image/*" id="bginput"
+                           onchange="loadbackgroundimage()">
+  </p>
+  <p>
+    <input type="button"  value="Create compisite" onclick="dogreen()">
+    <input type="button" value="clear"
+           onclick="clearCanvas()">
+  </p>
+</div>
+<!-- partial -->
+  <script>
+  	var fgImage=null;
+var canvas1=null;
+var canvas2=null;
+function loadforegroundimage()
+{
+  canvas1=document.getElementById("can1");
+  var fgfile=document.getElementById("fginput");
+  fgImage=new SimpleImage(fgfile);
+  fgImage.drawTo(canvas1);
+}
+var bgImage=null;
+function loadbackgroundimage()
+{
+  canvas2=document.getElementById("can2");
+  var bgfile=document.getElementById("bginput");
+  bgImage=new SimpleImage(bgfile);
+  bgImage.drawTo(canvas2);
+  
+  
+  
+}
+function createComposite()
+{
+  var output=new SimpleImage(fgImage.getWidth(),fgImage.getHeight());
+  for(var pixel of fgImage.values())
+    {
+      var x=pixel.getX();
+      var y=pixel.getY();
+      if(pixel.getGreen()>pixel.getRed()+pixel.getBlue())
+        {
+          var bgPixel=bgImage.getPixel(x,y);
+          output.setPixel(x,y,bgPixel);
+        }
+      else
+        {
+          output.setPixel(pixel.getX(),pixel.getY(),pixel)
+        }
+    }
+  return output;
+}
+function dogreen()
+{
+  if(fgImage==null || !fgImage.complete())
+    {
+      alert("foreground image not loaded");
+    }
+  if(bgImage==null || !bgImage.complete())
+    {
+      alert("background image not loaded");
+    }
+  clearCanvas();
+  var finalImage=createComposite();
+  finalImage.drawTo(canvas1);
+}
+function clearCanvas() {
+  doClear(canvas1);
+  doClear(canvas2);
+}
+
+function doClear(canvas) {
+  var context = canvas.getContext("2d");
+  context.clearRect(0,0,canvas.width,canvas.height);
+}
+  </script>
+
+</body>
+</html>
